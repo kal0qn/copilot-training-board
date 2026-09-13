@@ -1,0 +1,795 @@
+<title>Microsoft Copilot Training Board</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,500;0,600;0,700;0,800;1,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #F0F2F0;
+    --surface: #FFFFFF;
+    --surface-2: #E8ECE9;
+    --ink: #1B2321;
+    --ink-soft: #5C6B67;
+    --ink-faint: #8A9793;
+    --line: #D7DDDB;
+    --line-strong: #BFC9C5;
+    --accent: #1E6B63;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #DCEEEB;
+    --good: #2F7D46;
+    --good-soft: #E1F1E4;
+    --full: #B0333B;
+    --full-soft: #F5DEDE;
+    --shadow: 0 1px 2px rgba(20, 30, 28, 0.06), 0 8px 24px -12px rgba(20, 30, 28, 0.18);
+    --radius: 10px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12181A;
+      --surface: #1A2224;
+      --surface-2: #202A2C;
+      --ink: #E7EEEC;
+      --ink-soft: #9BADA8;
+      --ink-faint: #6C7C78;
+      --line: #2B3638;
+      --line-strong: #3B4A4C;
+      --accent: #52C4B7;
+      --accent-ink: #0D2320;
+      --accent-soft: #1D3634;
+      --good: #6FCB84;
+      --good-soft: #1C3324;
+      --full: #E37A78;
+      --full-soft: #3A2222;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #12181A;
+    --surface: #1A2224;
+    --surface-2: #202A2C;
+    --ink: #E7EEEC;
+    --ink-soft: #9BADA8;
+    --ink-faint: #6C7C78;
+    --line: #2B3638;
+    --line-strong: #3B4A4C;
+    --accent: #52C4B7;
+    --accent-ink: #0D2320;
+    --accent-soft: #1D3634;
+    --good: #6FCB84;
+    --good-soft: #1C3324;
+    --full: #E37A78;
+    --full-soft: #3A2222;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Archivo', system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 24px 64px;
+  }
+
+  /* ---------- header ---------- */
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 22px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-stretch: 110%;
+    font-size: 30px;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .brand .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 8px;
+    border-radius: 5px;
+  }
+
+  .asof {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    text-align: right;
+  }
+  .asof strong { color: var(--ink-soft); font-weight: 500; }
+
+  /* ---------- control deck ---------- */
+  .deck {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+
+  .field-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .deck-row {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .deck-col { flex: 1 1 320px; min-width: 260px; }
+
+  /* course chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-family: 'Archivo', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 8px 13px;
+    border-radius: 999px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chip .chip-name { font-family: 'Archivo', sans-serif; font-weight: 600; }
+  .chip.on {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+  .chip .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: currentColor; opacity: 0.55;
+  }
+  .chip.all-chip {
+    border-style: dashed;
+    margin-right: 6px;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  /* time range slider */
+  .range-readout {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .range-readout span.sep { color: var(--ink-faint); font-weight: 400; font-size: 15px; }
+  .range-readout .cap { font-family: 'Archivo', sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); margin-left: 4px; }
+
+  .slider-track {
+    position: relative;
+    height: 34px;
+  }
+  .slider-track .rail {
+    position: absolute;
+    top: 15px; left: 0; right: 0; height: 4px;
+    background: var(--line-strong);
+    border-radius: 3px;
+  }
+  .slider-track .fill {
+    position: absolute;
+    top: 15px; height: 4px;
+    background: var(--accent);
+    border-radius: 3px;
+  }
+  .slider-track input[type="range"] {
+    position: absolute;
+    top: 0; left: 0; width: 100%;
+    margin: 0;
+    height: 34px;
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    pointer-events: none;
+  }
+  .slider-track input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    pointer-events: all;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 3px solid var(--accent);
+    cursor: pointer;
+    margin-top: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    position: relative;
+    top: 8px;
+  }
+  .slider-track input[type="range"]::-moz-range-thumb {
+    pointer-events: all;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 3px solid var(--accent);
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  }
+  .slider-track input[type="range"]::-webkit-slider-runnable-track,
+  .slider-track input[type="range"]::-moz-range-track { background: transparent; }
+
+  .hour-ticks {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+    margin-top: 2px;
+    padding: 0 1px;
+  }
+
+  /* seats toggle */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 2px;
+  }
+  .switch {
+    position: relative;
+    width: 38px; height: 22px;
+    border-radius: 999px;
+    background: var(--line-strong);
+    border: none;
+    cursor: pointer;
+    flex: none;
+    transition: background 0.15s ease;
+  }
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--surface);
+    transition: transform 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .switch.on { background: var(--accent); }
+  .switch.on::after { transform: translateX(16px); }
+  .toggle-row label {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+
+  /* ---------- summary strip ---------- */
+  .summary {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    align-items: baseline;
+    padding: 14px 22px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-bottom: 18px;
+  }
+  .summary .metric {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+  }
+  .summary .metric b {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+  .summary .metric span {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- results table ---------- */
+  .board-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .board-scroll {
+    overflow-x: auto;
+    max-height: 640px;
+    overflow-y: auto;
+  }
+  table { width: 100%; border-collapse: collapse; min-width: 780px; }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--surface-2);
+    text-align: left;
+    font-family: 'Archivo', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--line-strong);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13.5px;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--surface-2); }
+
+  td.date-cell {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  td.time-cell {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  td.time-cell .arrow { color: var(--ink-faint); font-weight: 400; margin: 0 5px; }
+
+  .course-chip {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .course-chip .name {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+    white-space: normal;
+    max-width: 230px;
+    line-height: 1.3;
+  }
+  .course-chip .id {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+  }
+
+  td.tz-cell {
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    white-space: normal;
+    max-width: 260px;
+    line-height: 1.4;
+  }
+  td.tz-cell .orig-time {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--ink);
+    font-size: 12.5px;
+    display: block;
+    margin-bottom: 1px;
+  }
+
+  .seat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
+    padding: 4px 10px 4px 8px;
+    border-radius: 999px;
+  }
+  .seat-pill .bar {
+    width: 30px; height: 5px;
+    border-radius: 3px;
+    background: rgba(0,0,0,0.12);
+    overflow: hidden;
+    position: relative;
+    flex: none;
+  }
+  .seat-pill .bar > i {
+    display: block; height: 100%; border-radius: 3px;
+  }
+  .seat-pill.good { background: var(--good-soft); color: var(--good); }
+  .seat-pill.full { background: var(--full-soft); color: var(--full); }
+  .seat-pill.good .bar > i { background: var(--good); }
+  .seat-pill.full .bar > i { background: var(--full); }
+
+  .reg-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Archivo', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 6px 12px;
+    border: 1px solid var(--accent);
+    border-radius: 7px;
+    white-space: nowrap;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .reg-link:hover { background: var(--accent); color: var(--accent-ink); }
+  .reg-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .reg-link.full { border-color: var(--line-strong); color: var(--ink-faint); }
+  .reg-link.full:hover { background: var(--surface-2); color: var(--ink-soft); }
+
+  .empty-state {
+    padding: 64px 24px;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 14px;
+  }
+  .empty-state strong { display: block; color: var(--ink-soft); font-size: 16px; margin-bottom: 6px; font-family: 'Archivo', sans-serif; }
+
+  footer {
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  footer a { color: var(--ink-faint); }
+
+  @media (max-width: 640px) {
+    .deck-row { gap: 20px; }
+    h1 { font-size: 24px; }
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1>Microsoft Copilot Training Board</h1>
+      <span class="tag">Bulgaria time</span>
+    </div>
+    <div class="asof" id="asOf">as of &mdash;</div>
+  </header>
+
+  <div class="deck">
+    <div>
+      <span class="field-label">Course</span>
+      <div class="chips" id="courseChips"></div>
+    </div>
+
+    <div class="deck-row">
+      <div class="deck-col">
+        <span class="field-label">Session start window (Bulgaria time)</span>
+        <div class="range-readout">
+          <span id="lowReadout">08:00</span>
+          <span class="sep">&ndash;</span>
+          <span id="highReadout">20:00</span>
+          <span class="cap">local start time</span>
+        </div>
+        <div class="slider-track">
+          <div class="rail"></div>
+          <div class="fill" id="rangeFill"></div>
+          <input type="range" id="lowSlider" min="0" max="24" step="0.5" value="8" aria-label="Earliest start hour">
+          <input type="range" id="highSlider" min="0" max="24" step="0.5" value="20" aria-label="Latest start hour">
+        </div>
+        <div class="hour-ticks"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+      </div>
+
+      <div class="deck-col" style="flex: 0 1 260px;">
+        <span class="field-label">Availability</span>
+        <div class="toggle-row">
+          <button class="switch on" id="seatsToggle" role="switch" aria-checked="true" aria-label="Only show sessions with open seats"></button>
+          <label for="seatsToggle" id="seatsToggleLabel">Only show sessions with open seats</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="board-wrap">
+    <div class="board-scroll">
+      <table id="board">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time (BG)</th>
+            <th>Course</th>
+            <th>Local time &amp; zone</th>
+            <th>Seats</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="boardBody"></tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="emptyState" hidden>
+      <strong>No sessions match these filters</strong>
+      Widen the time window or include more courses.
+    </div>
+  </div>
+
+  <footer>
+    <span>Source: esi.microsoft.com, catalog IDs AI-3025 / AB-730 / MS-4018 / MS-4019, English sessions, Virtual classroom.</span>
+    <span id="rowCount"></span>
+  </footer>
+</div>
+
+<script>
+(async function () {
+  const COURSE_META = {
+    'AI-3025': { short: 'Work smarter with AI', title: 'Work smarter with AI' },
+    'AB-730':  { short: 'Business workflows with AI', title: 'Transform business workflows with generative AI' },
+    'MS-4018': { short: 'Draft & present with Copilot', title: 'Draft, analyze, and present with Microsoft 365 Copilot' },
+    'MS-4019': { short: 'Everyday processes with agents', title: 'Transform your everyday business processes with agents' },
+  };
+  const COURSE_ORDER = ['AI-3025', 'AB-730', 'MS-4018', 'MS-4019'];
+
+  window.__TRAINING_DATA__ = {"meta":{"asOf":"Sep 13, 2026"},"rows":[{"id":"106529","course":"AI-3025","bgDate":"14 Sep 2026","bgStart":"07:00","bgEnd":"10:00","startHour":7,"sortKey":"2026-09-14T07:00:00.000Z","origDate":"Sep 14, 2026","origTime":"09:30 AM - 12:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106529"},{"id":"106513","course":"MS-4018","bgDate":"14 Sep 2026","bgStart":"08:00","bgEnd":"16:00","startHour":8,"sortKey":"2026-09-14T08:00:00.000Z","origDate":"Sep 14, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"8/40","booked":8,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106513"},{"id":"106499","course":"AI-3025","bgDate":"14 Sep 2026","bgStart":"10:00","bgEnd":"13:00","startHour":10,"sortKey":"2026-09-14T10:00:00.000Z","origDate":"Sep 14, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106499"},{"id":"110333","course":"MS-4019","bgDate":"14 Sep 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-09-14T10:00:00.000Z","origDate":"Sep 14, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"0/30","booked":0,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=110333"},{"id":"106530","course":"AI-3025","bgDate":"14 Sep 2026","bgStart":"11:00","bgEnd":"14:00","startHour":11,"sortKey":"2026-09-14T11:00:00.000Z","origDate":"Sep 14, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106530"},{"id":"106514","course":"MS-4019","bgDate":"14 Sep 2026","bgStart":"11:00","bgEnd":"19:00","startHour":11,"sortKey":"2026-09-14T11:00:00.000Z","origDate":"Sep 14, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"0/30","booked":0,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=106514"},{"id":"106500","course":"AI-3025","bgDate":"14 Sep 2026","bgStart":"15:00","bgEnd":"18:00","startHour":15,"sortKey":"2026-09-14T15:00:00.000Z","origDate":"Sep 14, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"0/41","booked":0,"cap":41,"link":"https://esi.microsoft.com/Deliveryonly?delid=106500"},{"id":"110311","course":"MS-4018","bgDate":"14 Sep 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-09-14T16:00:00.000Z","origDate":"Sep 14, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"22/40","booked":22,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110311"},{"id":"106543","course":"MS-4019","bgDate":"14 Sep 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-09-14T16:00:00.000Z","origDate":"Sep 14, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"0/30","booked":0,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=106543"},{"id":"109878","course":"AB-730","bgDate":"14 Sep 2026","bgStart":"17:00","bgEnd":"01:00","startHour":17,"sortKey":"2026-09-14T17:00:00.000Z","origDate":"Sep 14, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"11/40","booked":11,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109878"},{"id":"106512","course":"MS-4018","bgDate":"15 Sep 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-09-15T10:00:00.000Z","origDate":"Sep 15, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"2/40","booked":2,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106512"},{"id":"106501","course":"AI-3025","bgDate":"15 Sep 2026","bgStart":"11:00","bgEnd":"14:00","startHour":11,"sortKey":"2026-09-15T11:00:00.000Z","origDate":"Sep 15, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106501"},{"id":"106502","course":"AI-3025","bgDate":"15 Sep 2026","bgStart":"16:00","bgEnd":"19:00","startHour":16,"sortKey":"2026-09-15T16:00:00.000Z","origDate":"Sep 15, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"1/40","booked":1,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106502"},{"id":"106544","course":"MS-4018","bgDate":"15 Sep 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-09-15T16:00:00.000Z","origDate":"Sep 15, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"1/40","booked":1,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106544"},{"id":"106536","course":"AI-3025","bgDate":"15 Sep 2026","bgStart":"20:00","bgEnd":"11:00","startHour":20,"sortKey":"2026-09-15T20:00:00.000Z","origDate":"Sep 16, 2026","origTime":"01:00 AM - 04:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"6/40","booked":6,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106536"},{"id":"106520","course":"AI-3025","bgDate":"16 Sep 2026","bgStart":"02:00","bgEnd":"05:00","startHour":2,"sortKey":"2026-09-16T02:00:00.000Z","origDate":"Sep 16, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+10:00) Canberra, Melbourne, Sydney","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106520"},{"id":"106535","course":"AI-3025","bgDate":"16 Sep 2026","bgStart":"04:00","bgEnd":"07:00","startHour":4,"sortKey":"2026-09-16T04:00:00.000Z","origDate":"Sep 16, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106535"},{"id":"106521","course":"AI-3025","bgDate":"16 Sep 2026","bgStart":"06:00","bgEnd":"09:00","startHour":6,"sortKey":"2026-09-16T06:00:00.000Z","origDate":"Sep 16, 2026","origTime":"01:00 PM - 04:00 PM","tz":"(GMT+10:00) Canberra, Melbourne, Sydney","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106521"},{"id":"109848","course":"AI-3025","bgDate":"16 Sep 2026","bgStart":"07:00","bgEnd":"10:00","startHour":7,"sortKey":"2026-09-16T07:00:00.000Z","origDate":"Sep 16, 2026","origTime":"09:30 AM - 12:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109848"},{"id":"110364","course":"AB-730","bgDate":"16 Sep 2026","bgStart":"07:00","bgEnd":"15:00","startHour":7,"sortKey":"2026-09-16T07:00:00.000Z","origDate":"Sep 16, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110364"},{"id":"106526","course":"AB-730","bgDate":"16 Sep 2026","bgStart":"07:00","bgEnd":"15:00","startHour":7,"sortKey":"2026-09-16T07:00:00.000Z","origDate":"Sep 16, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106526"},{"id":"109849","course":"AI-3025","bgDate":"16 Sep 2026","bgStart":"11:00","bgEnd":"14:00","startHour":11,"sortKey":"2026-09-16T11:00:00.000Z","origDate":"Sep 16, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109849"},{"id":"110292","course":"AI-3025","bgDate":"16 Sep 2026","bgStart":"16:00","bgEnd":"19:00","startHour":16,"sortKey":"2026-09-16T16:00:00.000Z","origDate":"Sep 16, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"5/40","booked":5,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110292"},{"id":"109431","course":"MS-4019","bgDate":"16 Sep 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-09-16T16:00:00.000Z","origDate":"Sep 16, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"10/30","booked":10,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=109431"},{"id":"110301","course":"AI-3025","bgDate":"16 Sep 2026","bgStart":"17:00","bgEnd":"20:00","startHour":17,"sortKey":"2026-09-16T17:00:00.000Z","origDate":"Sep 16, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"9/40","booked":9,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110301"},{"id":"110303","course":"AB-730","bgDate":"16 Sep 2026","bgStart":"17:00","bgEnd":"01:00","startHour":17,"sortKey":"2026-09-16T17:00:00.000Z","origDate":"Sep 16, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"27/40","booked":27,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110303"},{"id":"110295","course":"AI-3025","bgDate":"16 Sep 2026","bgStart":"19:00","bgEnd":"22:00","startHour":19,"sortKey":"2026-09-16T19:00:00.000Z","origDate":"Sep 16, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"23/40","booked":23,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110295"},{"id":"110293","course":"AI-3025","bgDate":"16 Sep 2026","bgStart":"20:30","bgEnd":"23:30","startHour":20.5,"sortKey":"2026-09-16T20:30:00.000Z","origDate":"Sep 16, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"20/40","booked":20,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110293"},{"id":"110302","course":"AI-3025","bgDate":"16 Sep 2026","bgStart":"21:00","bgEnd":"00:00","startHour":21,"sortKey":"2026-09-16T21:00:00.000Z","origDate":"Sep 16, 2026","origTime":"01:00 PM - 04:00 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"27/40","booked":27,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110302"},{"id":"110296","course":"AI-3025","bgDate":"16 Sep 2026","bgStart":"23:30","bgEnd":"02:30","startHour":23.5,"sortKey":"2026-09-16T23:30:00.000Z","origDate":"Sep 16, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"27/40","booked":27,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110296"},{"id":"110352","course":"AB-730","bgDate":"17 Sep 2026","bgStart":"08:00","bgEnd":"16:00","startHour":8,"sortKey":"2026-09-17T08:00:00.000Z","origDate":"Sep 17, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110352"},{"id":"110349","course":"MS-4019","bgDate":"17 Sep 2026","bgStart":"09:00","bgEnd":"17:00","startHour":9,"sortKey":"2026-09-17T09:00:00.000Z","origDate":"Sep 17, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+03:00) Athens, Bucharest","seats":"6/30","booked":6,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=110349"},{"id":"110334","course":"MS-4018","bgDate":"17 Sep 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-09-17T10:00:00.000Z","origDate":"Sep 17, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"12/30","booked":12,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=110334"},{"id":"106546","course":"MS-4019","bgDate":"17 Sep 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-09-17T16:00:00.000Z","origDate":"Sep 17, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"4/30","booked":4,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=106546"},{"id":"110304","course":"MS-4019","bgDate":"17 Sep 2026","bgStart":"17:00","bgEnd":"01:00","startHour":17,"sortKey":"2026-09-17T17:00:00.000Z","origDate":"Sep 17, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"21/30","booked":21,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=110304"},{"id":"110353","course":"AI-3025","bgDate":"18 Sep 2026","bgStart":"08:00","bgEnd":"11:00","startHour":8,"sortKey":"2026-09-18T08:00:00.000Z","origDate":"Sep 18, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"17/40","booked":17,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110353"},{"id":"110324","course":"MS-4019","bgDate":"18 Sep 2026","bgStart":"11:00","bgEnd":"19:00","startHour":11,"sortKey":"2026-09-18T11:00:00.000Z","origDate":"Sep 18, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"0/30","booked":0,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=110324"},{"id":"110354","course":"AI-3025","bgDate":"18 Sep 2026","bgStart":"12:00","bgEnd":"15:00","startHour":12,"sortKey":"2026-09-18T12:00:00.000Z","origDate":"Sep 18, 2026","origTime":"01:00 PM - 04:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"17/40","booked":17,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110354"},{"id":"106957","course":"MS-4018","bgDate":"21 Sep 2026","bgStart":"07:00","bgEnd":"15:00","startHour":7,"sortKey":"2026-09-21T07:00:00.000Z","origDate":"Sep 21, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106957"},{"id":"106972","course":"AI-3025","bgDate":"21 Sep 2026","bgStart":"08:00","bgEnd":"11:00","startHour":8,"sortKey":"2026-09-21T08:00:00.000Z","origDate":"Sep 21, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"13/40","booked":13,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106972"},{"id":"106967","course":"AB-730","bgDate":"21 Sep 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-09-21T10:00:00.000Z","origDate":"Sep 21, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106967"},{"id":"106983","course":"MS-4019","bgDate":"21 Sep 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-09-21T10:00:00.000Z","origDate":"Sep 21, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"0/30","booked":0,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=106983"},{"id":"106496","course":"AB-730","bgDate":"21 Sep 2026","bgStart":"11:00","bgEnd":"19:00","startHour":11,"sortKey":"2026-09-21T11:00:00.000Z","origDate":"Sep 21, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106496"},{"id":"110743","course":"MS-4018","bgDate":"21 Sep 2026","bgStart":"11:00","bgEnd":"19:00","startHour":11,"sortKey":"2026-09-21T11:00:00.000Z","origDate":"Sep 21, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"23/30","booked":23,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=110743"},{"id":"106973","course":"AI-3025","bgDate":"21 Sep 2026","bgStart":"13:00","bgEnd":"16:00","startHour":13,"sortKey":"2026-09-21T13:00:00.000Z","origDate":"Sep 21, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"13/40","booked":13,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106973"},{"id":"106924","course":"AB-730","bgDate":"21 Sep 2026","bgStart":"17:00","bgEnd":"01:00","startHour":17,"sortKey":"2026-09-21T17:00:00.000Z","origDate":"Sep 21, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"17/40","booked":17,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106924"},{"id":"106928","course":"AI-3025","bgDate":"21 Sep 2026","bgStart":"19:00","bgEnd":"22:00","startHour":19,"sortKey":"2026-09-21T19:00:00.000Z","origDate":"Sep 21, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"2/40","booked":2,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106928"},{"id":"106929","course":"AI-3025","bgDate":"21 Sep 2026","bgStart":"23:30","bgEnd":"02:30","startHour":23.5,"sortKey":"2026-09-21T23:30:00.000Z","origDate":"Sep 21, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"19/40","booked":19,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106929"},{"id":"106946","course":"MS-4019","bgDate":"22 Sep 2026","bgStart":"02:00","bgEnd":"10:00","startHour":2,"sortKey":"2026-09-22T02:00:00.000Z","origDate":"Sep 22, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+10:00) Canberra, Melbourne, Sydney","seats":"11/35","booked":11,"cap":35,"link":"https://esi.microsoft.com/Deliveryonly?delid=106946"},{"id":"106963","course":"MS-4018","bgDate":"22 Sep 2026","bgStart":"04:00","bgEnd":"12:00","startHour":4,"sortKey":"2026-09-22T04:00:00.000Z","origDate":"Sep 22, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"0/35","booked":0,"cap":35,"link":"https://esi.microsoft.com/Deliveryonly?delid=106963"},{"id":"106930","course":"MS-4019","bgDate":"22 Sep 2026","bgStart":"19:00","bgEnd":"03:00","startHour":19,"sortKey":"2026-09-22T19:00:00.000Z","origDate":"Sep 22, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"0/30","booked":0,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=106930"},{"id":"110760","course":"MS-4018","bgDate":"23 Sep 2026","bgStart":"08:00","bgEnd":"16:00","startHour":8,"sortKey":"2026-09-23T08:00:00.000Z","origDate":"Sep 23, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"29/30","booked":29,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=110760"},{"id":"106970","course":"AI-3025","bgDate":"23 Sep 2026","bgStart":"11:00","bgEnd":"14:00","startHour":11,"sortKey":"2026-09-23T11:00:00.000Z","origDate":"Sep 23, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106970"},{"id":"110745","course":"MS-4019","bgDate":"23 Sep 2026","bgStart":"11:00","bgEnd":"19:00","startHour":11,"sortKey":"2026-09-23T11:00:00.000Z","origDate":"Sep 23, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"17/30","booked":17,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=110745"},{"id":"106971","course":"AI-3025","bgDate":"23 Sep 2026","bgStart":"16:00","bgEnd":"19:00","startHour":16,"sortKey":"2026-09-23T16:00:00.000Z","origDate":"Sep 23, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106971"},{"id":"106944","course":"MS-4018","bgDate":"24 Sep 2026","bgStart":"02:00","bgEnd":"10:00","startHour":2,"sortKey":"2026-09-24T02:00:00.000Z","origDate":"Sep 24, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+10:00) Canberra, Melbourne, Sydney","seats":"4/35","booked":4,"cap":35,"link":"https://esi.microsoft.com/Deliveryonly?delid=106944"},{"id":"106982","course":"MS-4018","bgDate":"24 Sep 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-09-24T10:00:00.000Z","origDate":"Sep 24, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"8/40","booked":8,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106982"},{"id":"110781","course":"AB-730","bgDate":"24 Sep 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-09-24T16:00:00.000Z","origDate":"Sep 24, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"38/40","booked":38,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110781"},{"id":"110803","course":"AI-3025","bgDate":"24 Sep 2026","bgStart":"19:00","bgEnd":"22:00","startHour":19,"sortKey":"2026-09-24T19:00:00.000Z","origDate":"Sep 24, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"35/40","booked":35,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110803"},{"id":"110804","course":"AI-3025","bgDate":"24 Sep 2026","bgStart":"23:30","bgEnd":"02:30","startHour":23.5,"sortKey":"2026-09-24T23:30:00.000Z","origDate":"Sep 24, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"33/40","booked":33,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110804"},{"id":"106965","course":"MS-4019","bgDate":"25 Sep 2026","bgStart":"04:00","bgEnd":"12:00","startHour":4,"sortKey":"2026-09-25T04:00:00.000Z","origDate":"Sep 25, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"8/35","booked":8,"cap":35,"link":"https://esi.microsoft.com/Deliveryonly?delid=106965"},{"id":"110787","course":"MS-4019","bgDate":"25 Sep 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-09-25T16:00:00.000Z","origDate":"Sep 25, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"0/30","booked":0,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=110787"},{"id":"106926","course":"AI-3025","bgDate":"25 Sep 2026","bgStart":"17:00","bgEnd":"20:00","startHour":17,"sortKey":"2026-09-25T17:00:00.000Z","origDate":"Sep 25, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"14/40","booked":14,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106926"},{"id":"106927","course":"AI-3025","bgDate":"25 Sep 2026","bgStart":"21:30","bgEnd":"00:30","startHour":21.5,"sortKey":"2026-09-25T21:30:00.000Z","origDate":"Sep 25, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"19/40","booked":19,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=106927"},{"id":"107721","course":"AB-730","bgDate":"28 Sep 2026","bgStart":"07:00","bgEnd":"15:00","startHour":7,"sortKey":"2026-09-28T07:00:00.000Z","origDate":"Sep 28, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=107721"},{"id":"107755","course":"MS-4018","bgDate":"28 Sep 2026","bgStart":"11:00","bgEnd":"19:00","startHour":11,"sortKey":"2026-09-28T11:00:00.000Z","origDate":"Sep 28, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"8/40","booked":8,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=107755"},{"id":"111109","course":"AI-3025","bgDate":"28 Sep 2026","bgStart":"16:00","bgEnd":"19:00","startHour":16,"sortKey":"2026-09-28T16:00:00.000Z","origDate":"Sep 28, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"34/40","booked":34,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111109"},{"id":"107704","course":"AB-730","bgDate":"28 Sep 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-09-28T16:00:00.000Z","origDate":"Sep 28, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"24/40","booked":24,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=107704"},{"id":"111110","course":"AI-3025","bgDate":"28 Sep 2026","bgStart":"20:30","bgEnd":"23:30","startHour":20.5,"sortKey":"2026-09-28T20:30:00.000Z","origDate":"Sep 28, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"32/40","booked":32,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111110"},{"id":"111123","course":"MS-4018","bgDate":"29 Sep 2026","bgStart":"07:00","bgEnd":"15:00","startHour":7,"sortKey":"2026-09-29T07:00:00.000Z","origDate":"Sep 29, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"33/40","booked":33,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111123"},{"id":"107743","course":"AI-3025","bgDate":"29 Sep 2026","bgStart":"09:00","bgEnd":"12:00","startHour":9,"sortKey":"2026-09-29T09:00:00.000Z","origDate":"Sep 29, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+03:00) Athens, Bucharest","seats":"13/40","booked":13,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=107743"},{"id":"107756","course":"MS-4019","bgDate":"29 Sep 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-09-29T10:00:00.000Z","origDate":"Sep 29, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"0/30","booked":0,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=107756"},{"id":"107744","course":"AI-3025","bgDate":"29 Sep 2026","bgStart":"14:00","bgEnd":"17:00","startHour":14,"sortKey":"2026-09-29T14:00:00.000Z","origDate":"Sep 29, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+03:00) Athens, Bucharest","seats":"25/40","booked":25,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=107744"},{"id":"107731","course":"AI-3025","bgDate":"30 Sep 2026","bgStart":"07:00","bgEnd":"10:00","startHour":7,"sortKey":"2026-09-30T07:00:00.000Z","origDate":"Sep 30, 2026","origTime":"09:30 AM - 12:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=107731"},{"id":"111138","course":"MS-4019","bgDate":"30 Sep 2026","bgStart":"07:00","bgEnd":"15:00","startHour":7,"sortKey":"2026-09-30T07:00:00.000Z","origDate":"Sep 30, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"17/40","booked":17,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111138"},{"id":"107727","course":"MS-4019","bgDate":"30 Sep 2026","bgStart":"07:00","bgEnd":"15:00","startHour":7,"sortKey":"2026-09-30T07:00:00.000Z","origDate":"Sep 30, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=107727"},{"id":"111128","course":"MS-4019","bgDate":"30 Sep 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-09-30T10:00:00.000Z","origDate":"Sep 30, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"20/30","booked":20,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=111128"},{"id":"107732","course":"AI-3025","bgDate":"30 Sep 2026","bgStart":"11:00","bgEnd":"14:00","startHour":11,"sortKey":"2026-09-30T11:00:00.000Z","origDate":"Sep 30, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=107732"},{"id":"111134","course":"AB-730","bgDate":"30 Sep 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-09-30T16:00:00.000Z","origDate":"Sep 30, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"29/40","booked":29,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111134"},{"id":"111136","course":"AI-3025","bgDate":"30 Sep 2026","bgStart":"17:00","bgEnd":"20:00","startHour":17,"sortKey":"2026-09-30T17:00:00.000Z","origDate":"Sep 30, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"38/40","booked":38,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111136"},{"id":"111137","course":"AI-3025","bgDate":"30 Sep 2026","bgStart":"21:30","bgEnd":"00:30","startHour":21.5,"sortKey":"2026-09-30T21:30:00.000Z","origDate":"Sep 30, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"39/40","booked":39,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111137"},{"id":"108664","course":"AB-730","bgDate":"01 Oct 2026","bgStart":"04:00","bgEnd":"12:00","startHour":4,"sortKey":"2026-10-01T04:00:00.000Z","origDate":"Oct 01, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"2/40","booked":2,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=108664"},{"id":"107726","course":"MS-4018","bgDate":"01 Oct 2026","bgStart":"07:00","bgEnd":"15:00","startHour":7,"sortKey":"2026-10-01T07:00:00.000Z","origDate":"Oct 01, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"9/40","booked":9,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=107726"},{"id":"108633","course":"AB-730","bgDate":"05 Oct 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-10-05T10:00:00.000Z","origDate":"Oct 05, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"14/40","booked":14,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=108633"},{"id":"108622","course":"MS-4018","bgDate":"05 Oct 2026","bgStart":"17:00","bgEnd":"01:00","startHour":17,"sortKey":"2026-10-05T17:00:00.000Z","origDate":"Oct 05, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"19/40","booked":19,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=108622"},{"id":"108637","course":"AI-3025","bgDate":"06 Oct 2026","bgStart":"10:00","bgEnd":"13:00","startHour":10,"sortKey":"2026-10-06T10:00:00.000Z","origDate":"Oct 06, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"15/40","booked":15,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=108637"},{"id":"108645","course":"MS-4018","bgDate":"06 Oct 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-10-06T10:00:00.000Z","origDate":"Oct 06, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"16/40","booked":16,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=108645"},{"id":"108638","course":"AI-3025","bgDate":"06 Oct 2026","bgStart":"15:00","bgEnd":"18:00","startHour":15,"sortKey":"2026-10-06T15:00:00.000Z","origDate":"Oct 06, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"18/40","booked":18,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=108638"},{"id":"108617","course":"MS-4019","bgDate":"06 Oct 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-10-06T16:00:00.000Z","origDate":"Oct 06, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"13/30","booked":13,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=108617"},{"id":"108646","course":"MS-4019","bgDate":"08 Oct 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-10-08T10:00:00.000Z","origDate":"Oct 08, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"10/30","booked":10,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=108646"},{"id":"108631","course":"MS-4018","bgDate":"08 Oct 2026","bgStart":"19:00","bgEnd":"03:00","startHour":19,"sortKey":"2026-10-08T19:00:00.000Z","origDate":"Oct 08, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"22/40","booked":22,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=108631"},{"id":"108650","course":"AB-730","bgDate":"09 Oct 2026","bgStart":"07:00","bgEnd":"15:00","startHour":7,"sortKey":"2026-10-09T07:00:00.000Z","origDate":"Oct 09, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"7/40","booked":7,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=108650"},{"id":"108624","course":"AI-3025","bgDate":"09 Oct 2026","bgStart":"17:00","bgEnd":"20:00","startHour":17,"sortKey":"2026-10-09T17:00:00.000Z","origDate":"Oct 09, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"28/40","booked":28,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=108624"},{"id":"108626","course":"MS-4019","bgDate":"09 Oct 2026","bgStart":"17:00","bgEnd":"01:00","startHour":17,"sortKey":"2026-10-09T17:00:00.000Z","origDate":"Oct 09, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"15/30","booked":15,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=108626"},{"id":"108625","course":"AI-3025","bgDate":"09 Oct 2026","bgStart":"21:30","bgEnd":"00:30","startHour":21.5,"sortKey":"2026-10-09T21:30:00.000Z","origDate":"Oct 09, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=108625"},{"id":"109262","course":"AB-730","bgDate":"12 Oct 2026","bgStart":"11:00","bgEnd":"19:00","startHour":11,"sortKey":"2026-10-12T11:00:00.000Z","origDate":"Oct 12, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"8/40","booked":8,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109262"},{"id":"109277","course":"MS-4018","bgDate":"12 Oct 2026","bgStart":"11:00","bgEnd":"19:00","startHour":11,"sortKey":"2026-10-12T11:00:00.000Z","origDate":"Oct 12, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"15/40","booked":15,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109277"},{"id":"109246","course":"MS-4018","bgDate":"12 Oct 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-10-12T16:00:00.000Z","origDate":"Oct 12, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"21/40","booked":21,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109246"},{"id":"109278","course":"MS-4018","bgDate":"13 Oct 2026","bgStart":"08:00","bgEnd":"16:00","startHour":8,"sortKey":"2026-10-13T08:00:00.000Z","origDate":"Oct 13, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"27/40","booked":27,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109278"},{"id":"109267","course":"AI-3025","bgDate":"13 Oct 2026","bgStart":"11:00","bgEnd":"14:00","startHour":11,"sortKey":"2026-10-13T11:00:00.000Z","origDate":"Oct 13, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"9/40","booked":9,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109267"},{"id":"109259","course":"AI-3025","bgDate":"13 Oct 2026","bgStart":"16:00","bgEnd":"19:00","startHour":16,"sortKey":"2026-10-13T16:00:00.000Z","origDate":"Oct 13, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"14/40","booked":14,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109259"},{"id":"109268","course":"AI-3025","bgDate":"13 Oct 2026","bgStart":"16:00","bgEnd":"19:00","startHour":16,"sortKey":"2026-10-13T16:00:00.000Z","origDate":"Oct 13, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"11/40","booked":11,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109268"},{"id":"109252","course":"MS-4019","bgDate":"13 Oct 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-10-13T16:00:00.000Z","origDate":"Oct 13, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"14/30","booked":14,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=109252"},{"id":"109260","course":"AI-3025","bgDate":"13 Oct 2026","bgStart":"20:30","bgEnd":"23:30","startHour":20.5,"sortKey":"2026-10-13T20:30:00.000Z","origDate":"Oct 13, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"19/40","booked":19,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109260"},{"id":"109280","course":"AB-730","bgDate":"15 Oct 2026","bgStart":"02:00","bgEnd":"10:00","startHour":2,"sortKey":"2026-10-15T02:00:00.000Z","origDate":"Oct 15, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+10:00) Canberra, Melbourne, Sydney","seats":"23/40","booked":23,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109280"},{"id":"109294","course":"AI-3025","bgDate":"15 Oct 2026","bgStart":"04:00","bgEnd":"07:00","startHour":4,"sortKey":"2026-10-15T04:00:00.000Z","origDate":"Oct 15, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"16/40","booked":16,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109294"},{"id":"109296","course":"AI-3025","bgDate":"15 Oct 2026","bgStart":"08:00","bgEnd":"11:00","startHour":8,"sortKey":"2026-10-15T08:00:00.000Z","origDate":"Oct 15, 2026","origTime":"01:00 PM - 04:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"21/40","booked":21,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109296"},{"id":"109287","course":"MS-4018","bgDate":"16 Oct 2026","bgStart":"04:00","bgEnd":"12:00","startHour":4,"sortKey":"2026-10-16T04:00:00.000Z","origDate":"Oct 16, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"23/35","booked":23,"cap":35,"link":"https://esi.microsoft.com/Deliveryonly?delid=109287"},{"id":"109293","course":"AI-3025","bgDate":"16 Oct 2026","bgStart":"07:00","bgEnd":"10:00","startHour":7,"sortKey":"2026-10-16T07:00:00.000Z","origDate":"Oct 16, 2026","origTime":"09:30 AM - 12:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"26/40","booked":26,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109293"},{"id":"109303","course":"MS-4018","bgDate":"16 Oct 2026","bgStart":"07:00","bgEnd":"15:00","startHour":7,"sortKey":"2026-10-16T07:00:00.000Z","origDate":"Oct 16, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"29/40","booked":29,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109303"},{"id":"109295","course":"AI-3025","bgDate":"16 Oct 2026","bgStart":"11:00","bgEnd":"14:00","startHour":11,"sortKey":"2026-10-16T11:00:00.000Z","origDate":"Oct 16, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"23/40","booked":23,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109295"},{"id":"109688","course":"AI-3025","bgDate":"19 Oct 2026","bgStart":"09:00","bgEnd":"12:00","startHour":9,"sortKey":"2026-10-19T09:00:00.000Z","origDate":"Oct 19, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+03:00) Athens, Bucharest","seats":"25/40","booked":25,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109688"},{"id":"109683","course":"AB-730","bgDate":"19 Oct 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-10-19T10:00:00.000Z","origDate":"Oct 19, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"25/40","booked":25,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109683"},{"id":"109689","course":"AI-3025","bgDate":"19 Oct 2026","bgStart":"14:00","bgEnd":"17:00","startHour":14,"sortKey":"2026-10-19T14:00:00.000Z","origDate":"Oct 19, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+03:00) Athens, Bucharest","seats":"33/40","booked":33,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109689"},{"id":"109686","course":"AI-3025","bgDate":"20 Oct 2026","bgStart":"10:00","bgEnd":"13:00","startHour":10,"sortKey":"2026-10-20T10:00:00.000Z","origDate":"Oct 20, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"24/40","booked":24,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109686"},{"id":"109687","course":"AI-3025","bgDate":"20 Oct 2026","bgStart":"15:00","bgEnd":"18:00","startHour":15,"sortKey":"2026-10-20T15:00:00.000Z","origDate":"Oct 20, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"30/40","booked":30,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109687"},{"id":"109649","course":"AB-730","bgDate":"20 Oct 2026","bgStart":"16:00","bgEnd":"00:00","startHour":16,"sortKey":"2026-10-20T16:00:00.000Z","origDate":"Oct 20, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"29/40","booked":29,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109649"},{"id":"109646","course":"MS-4019","bgDate":"20 Oct 2026","bgStart":"19:00","bgEnd":"03:00","startHour":19,"sortKey":"2026-10-20T19:00:00.000Z","origDate":"Oct 20, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"21/30","booked":21,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=109646"},{"id":"109680","course":"MS-4019","bgDate":"21 Oct 2026","bgStart":"07:00","bgEnd":"15:00","startHour":7,"sortKey":"2026-10-21T07:00:00.000Z","origDate":"Oct 21, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"0/40","booked":0,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=109680"},{"id":"109697","course":"MS-4018","bgDate":"21 Oct 2026","bgStart":"11:00","bgEnd":"19:00","startHour":11,"sortKey":"2026-10-21T11:00:00.000Z","origDate":"Oct 21, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"9/30","booked":9,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=109697"},{"id":"109698","course":"MS-4019","bgDate":"22 Oct 2026","bgStart":"11:00","bgEnd":"19:00","startHour":11,"sortKey":"2026-10-22T11:00:00.000Z","origDate":"Oct 22, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"13/30","booked":13,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=109698"},{"id":"110126","course":"AB-730","bgDate":"26 Oct 2026","bgStart":"07:00","bgEnd":"15:00","startHour":7,"sortKey":"2026-10-26T07:00:00.000Z","origDate":"Oct 26, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"8/40","booked":8,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110126"},{"id":"110132","course":"AI-3025","bgDate":"27 Oct 2026","bgStart":"07:00","bgEnd":"10:00","startHour":7,"sortKey":"2026-10-27T07:00:00.000Z","origDate":"Oct 27, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"19/40","booked":19,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110132"},{"id":"110135","course":"AI-3025","bgDate":"27 Oct 2026","bgStart":"12:00","bgEnd":"15:00","startHour":12,"sortKey":"2026-10-27T12:00:00.000Z","origDate":"Oct 27, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"1/40","booked":1,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110135"},{"id":"110172","course":"MS-4018","bgDate":"27 Oct 2026","bgStart":"15:00","bgEnd":"23:00","startHour":15,"sortKey":"2026-10-27T15:00:00.000Z","origDate":"Oct 27, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"33/40","booked":33,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110172"},{"id":"110138","course":"MS-4018","bgDate":"28 Oct 2026","bgStart":"09:00","bgEnd":"17:00","startHour":9,"sortKey":"2026-10-28T09:00:00.000Z","origDate":"Oct 28, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"25/40","booked":25,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110138"},{"id":"110173","course":"AB-730","bgDate":"28 Oct 2026","bgStart":"15:00","bgEnd":"23:00","startHour":15,"sortKey":"2026-10-28T15:00:00.000Z","origDate":"Oct 28, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"33/40","booked":33,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110173"},{"id":"110196","course":"MS-4018","bgDate":"29 Oct 2026","bgStart":"06:00","bgEnd":"14:00","startHour":6,"sortKey":"2026-10-29T06:00:00.000Z","origDate":"Oct 29, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"33/40","booked":33,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110196"},{"id":"110181","course":"MS-4018","bgDate":"30 Oct 2026","bgStart":"01:00","bgEnd":"09:00","startHour":1,"sortKey":"2026-10-30T01:00:00.000Z","origDate":"Oct 30, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+10:00) Canberra, Melbourne, Sydney","seats":"24/35","booked":24,"cap":35,"link":"https://esi.microsoft.com/Deliveryonly?delid=110181"},{"id":"110189","course":"AI-3025","bgDate":"30 Oct 2026","bgStart":"06:00","bgEnd":"09:00","startHour":6,"sortKey":"2026-10-30T06:00:00.000Z","origDate":"Oct 30, 2026","origTime":"09:30 AM - 12:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"33/40","booked":33,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110189"},{"id":"110190","course":"AI-3025","bgDate":"30 Oct 2026","bgStart":"10:00","bgEnd":"13:00","startHour":10,"sortKey":"2026-10-30T10:00:00.000Z","origDate":"Oct 30, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"20/40","booked":20,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110190"},{"id":"110645","course":"MS-4018","bgDate":"02 Nov 2026","bgStart":"06:00","bgEnd":"14:00","startHour":6,"sortKey":"2026-11-02T06:00:00.000Z","origDate":"Nov 02, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"37/40","booked":37,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110645"},{"id":"110641","course":"MS-4019","bgDate":"02 Nov 2026","bgStart":"06:00","bgEnd":"14:00","startHour":6,"sortKey":"2026-11-02T06:00:00.000Z","origDate":"Nov 02, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"35/40","booked":35,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110641"},{"id":"110616","course":"AB-730","bgDate":"02 Nov 2026","bgStart":"09:00","bgEnd":"17:00","startHour":9,"sortKey":"2026-11-02T09:00:00.000Z","origDate":"Nov 02, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"32/40","booked":32,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110616"},{"id":"110658","course":"AB-730","bgDate":"02 Nov 2026","bgStart":"15:00","bgEnd":"23:00","startHour":15,"sortKey":"2026-11-02T15:00:00.000Z","origDate":"Nov 02, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"28/40","booked":28,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110658"},{"id":"110664","course":"AI-3025","bgDate":"03 Nov 2026","bgStart":"18:00","bgEnd":"21:00","startHour":18,"sortKey":"2026-11-03T18:00:00.000Z","origDate":"Nov 03, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"37/40","booked":37,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110664"},{"id":"110665","course":"AI-3025","bgDate":"03 Nov 2026","bgStart":"22:30","bgEnd":"01:30","startHour":22.5,"sortKey":"2026-11-03T22:30:00.000Z","origDate":"Nov 03, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"36/40","booked":36,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110665"},{"id":"110638","course":"AI-3025","bgDate":"04 Nov 2026","bgStart":"06:00","bgEnd":"09:00","startHour":6,"sortKey":"2026-11-04T06:00:00.000Z","origDate":"Nov 04, 2026","origTime":"09:30 AM - 12:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"32/40","booked":32,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110638"},{"id":"110622","course":"AI-3025","bgDate":"04 Nov 2026","bgStart":"09:00","bgEnd":"12:00","startHour":9,"sortKey":"2026-11-04T09:00:00.000Z","origDate":"Nov 04, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"36/40","booked":36,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110622"},{"id":"110639","course":"AI-3025","bgDate":"04 Nov 2026","bgStart":"10:30","bgEnd":"13:30","startHour":10.5,"sortKey":"2026-11-04T10:30:00.000Z","origDate":"Nov 04, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"30/40","booked":30,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110639"},{"id":"110624","course":"AI-3025","bgDate":"04 Nov 2026","bgStart":"14:00","bgEnd":"17:00","startHour":14,"sortKey":"2026-11-04T14:00:00.000Z","origDate":"Nov 04, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"31/40","booked":31,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110624"},{"id":"110662","course":"AI-3025","bgDate":"04 Nov 2026","bgStart":"15:00","bgEnd":"18:00","startHour":15,"sortKey":"2026-11-04T15:00:00.000Z","origDate":"Nov 04, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"37/40","booked":37,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110662"},{"id":"110663","course":"AI-3025","bgDate":"04 Nov 2026","bgStart":"19:30","bgEnd":"22:30","startHour":19.5,"sortKey":"2026-11-04T19:30:00.000Z","origDate":"Nov 04, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"37/40","booked":37,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110663"},{"id":"110646","course":"AI-3025","bgDate":"05 Nov 2026","bgStart":"03:00","bgEnd":"06:00","startHour":3,"sortKey":"2026-11-05T03:00:00.000Z","origDate":"Nov 05, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"33/40","booked":33,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110646"},{"id":"110647","course":"AI-3025","bgDate":"05 Nov 2026","bgStart":"08:00","bgEnd":"11:00","startHour":8,"sortKey":"2026-11-05T08:00:00.000Z","origDate":"Nov 05, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"33/40","booked":33,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=110647"},{"id":"110669","course":"MS-4019","bgDate":"05 Nov 2026","bgStart":"18:00","bgEnd":"02:00","startHour":18,"sortKey":"2026-11-05T18:00:00.000Z","origDate":"Nov 05, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"25/30","booked":25,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=110669"},{"id":"111027","course":"AB-730","bgDate":"09 Nov 2026","bgStart":"01:00","bgEnd":"09:00","startHour":1,"sortKey":"2026-11-09T01:00:00.000Z","origDate":"Nov 09, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+10:00) Canberra, Melbourne, Sydney","seats":"32/35","booked":32,"cap":35,"link":"https://esi.microsoft.com/Deliveryonly?delid=111027"},{"id":"111053","course":"AI-3025","bgDate":"10 Nov 2026","bgStart":"07:00","bgEnd":"10:00","startHour":7,"sortKey":"2026-11-10T07:00:00.000Z","origDate":"Nov 10, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"37/40","booked":37,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111053"},{"id":"111058","course":"MS-4018","bgDate":"10 Nov 2026","bgStart":"08:00","bgEnd":"16:00","startHour":8,"sortKey":"2026-11-10T08:00:00.000Z","origDate":"Nov 10, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+03:00) Athens, Bucharest","seats":"28/30","booked":28,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=111058"},{"id":"111054","course":"AI-3025","bgDate":"10 Nov 2026","bgStart":"12:00","bgEnd":"15:00","startHour":12,"sortKey":"2026-11-10T12:00:00.000Z","origDate":"Nov 10, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+04:00) Abu Dhabi, Muscat","seats":"39/40","booked":39,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111054"},{"id":"111100","course":"AI-3025","bgDate":"10 Nov 2026","bgStart":"16:00","bgEnd":"19:00","startHour":16,"sortKey":"2026-11-10T16:00:00.000Z","origDate":"Nov 10, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"38/40","booked":38,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111100"},{"id":"111101","course":"AI-3025","bgDate":"10 Nov 2026","bgStart":"20:30","bgEnd":"23:30","startHour":20.5,"sortKey":"2026-11-10T20:30:00.000Z","origDate":"Nov 10, 2026","origTime":"01:30 PM - 04:30 PM","tz":"(GMT-05:00) Central Time (US & Canada)","seats":"38/40","booked":38,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111101"},{"id":"111050","course":"AB-730","bgDate":"11 Nov 2026","bgStart":"03:00","bgEnd":"11:00","startHour":3,"sortKey":"2026-11-11T03:00:00.000Z","origDate":"Nov 11, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"30/35","booked":30,"cap":35,"link":"https://esi.microsoft.com/Deliveryonly?delid=111050"},{"id":"111033","course":"AI-3025","bgDate":"11 Nov 2026","bgStart":"06:00","bgEnd":"09:00","startHour":6,"sortKey":"2026-11-11T06:00:00.000Z","origDate":"Nov 11, 2026","origTime":"09:30 AM - 12:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"39/40","booked":39,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111033"},{"id":"111034","course":"AI-3025","bgDate":"11 Nov 2026","bgStart":"10:30","bgEnd":"13:30","startHour":10.5,"sortKey":"2026-11-11T10:30:00.000Z","origDate":"Nov 11, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"39/40","booked":39,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111034"},{"id":"111051","course":"MS-4018","bgDate":"13 Nov 2026","bgStart":"03:00","bgEnd":"11:00","startHour":3,"sortKey":"2026-11-13T03:00:00.000Z","origDate":"Nov 13, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"28/35","booked":28,"cap":35,"link":"https://esi.microsoft.com/Deliveryonly?delid=111051"},{"id":"111309","course":"MS-4018","bgDate":"16 Nov 2026","bgStart":"01:00","bgEnd":"09:00","startHour":1,"sortKey":"2026-11-16T01:00:00.000Z","origDate":"Nov 16, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+10:00) Canberra, Melbourne, Sydney","seats":"35/35","booked":35,"cap":35,"link":"https://esi.microsoft.com/Deliveryonly?delid=111309"},{"id":"111294","course":"MS-4018","bgDate":"16 Nov 2026","bgStart":"09:00","bgEnd":"17:00","startHour":9,"sortKey":"2026-11-16T09:00:00.000Z","origDate":"Nov 16, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"30/30","booked":30,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=111294"},{"id":"111297","course":"AB-730","bgDate":"16 Nov 2026","bgStart":"10:00","bgEnd":"18:00","startHour":10,"sortKey":"2026-11-16T10:00:00.000Z","origDate":"Nov 16, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"40/40","booked":40,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111297"},{"id":"111295","course":"MS-4019","bgDate":"17 Nov 2026","bgStart":"09:00","bgEnd":"17:00","startHour":9,"sortKey":"2026-11-17T09:00:00.000Z","origDate":"Nov 17, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+02:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna","seats":"28/30","booked":28,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=111295"},{"id":"111300","course":"AI-3025","bgDate":"17 Nov 2026","bgStart":"10:00","bgEnd":"13:00","startHour":10,"sortKey":"2026-11-17T10:00:00.000Z","origDate":"Nov 17, 2026","origTime":"09:00 AM - 12:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"39/40","booked":39,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111300"},{"id":"111302","course":"AI-3025","bgDate":"17 Nov 2026","bgStart":"15:00","bgEnd":"18:00","startHour":15,"sortKey":"2026-11-17T15:00:00.000Z","origDate":"Nov 17, 2026","origTime":"02:00 PM - 05:00 PM","tz":"(GMT+01:00) Dublin, Edinburgh, Lisbon, London","seats":"39/40","booked":39,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111302"},{"id":"111290","course":"MS-4018","bgDate":"17 Nov 2026","bgStart":"18:00","bgEnd":"02:00","startHour":18,"sortKey":"2026-11-17T18:00:00.000Z","origDate":"Nov 17, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-07:00) Pacific Time (US & Canada)","seats":"40/40","booked":40,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111290"},{"id":"111314","course":"MS-4019","bgDate":"18 Nov 2026","bgStart":"03:00","bgEnd":"11:00","startHour":3,"sortKey":"2026-11-18T03:00:00.000Z","origDate":"Nov 18, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT+08:00) Kuala Lumpur, Singapore","seats":"34/35","booked":34,"cap":35,"link":"https://esi.microsoft.com/Deliveryonly?delid=111314"},{"id":"111312","course":"AB-730","bgDate":"18 Nov 2026","bgStart":"06:00","bgEnd":"14:00","startHour":6,"sortKey":"2026-11-18T06:00:00.000Z","origDate":"Nov 18, 2026","origTime":"09:30 AM - 05:30 PM","tz":"(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi","seats":"35/40","booked":35,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111312"},{"id":"111282","course":"MS-4018","bgDate":"18 Nov 2026","bgStart":"15:00","bgEnd":"23:00","startHour":15,"sortKey":"2026-11-18T15:00:00.000Z","origDate":"Nov 18, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"40/40","booked":40,"cap":40,"link":"https://esi.microsoft.com/Deliveryonly?delid=111282"},{"id":"111280","course":"MS-4019","bgDate":"19 Nov 2026","bgStart":"15:00","bgEnd":"23:00","startHour":15,"sortKey":"2026-11-19T15:00:00.000Z","origDate":"Nov 19, 2026","origTime":"09:00 AM - 05:00 PM","tz":"(GMT-04:00) Eastern Time (US & Canada)","seats":"30/30","booked":30,"cap":30,"link":"https://esi.microsoft.com/Deliveryonly?delid=111280"}]};
+  let rows = [];
+  let asOfText = '—';
+  try {
+    // A shareable build embeds the data as window.__TRAINING_DATA__ (see build_shareable.py)
+    // so the page works standalone with no server; otherwise fall back to fetching the
+    // sibling JSON file (the local dev flow via serve.bat).
+    const data = window.__TRAINING_DATA__ || await (await fetch('training_data.json')).json();
+    rows = data.rows;
+    asOfText = data.meta && data.meta.asOf ? data.meta.asOf : asOfText;
+  } catch (e) {
+    document.getElementById('boardBody').innerHTML =
+      '<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--full)">Could not load training_data.json</td></tr>';
+    return;
+  }
+
+  const state = {
+    courses: new Set(COURSE_ORDER),
+    low: 8,
+    high: 20,
+    onlyOpen: true,
+  };
+
+  // Course chips behave like an Excel slicer: a plain click isolates to just that
+  // course; Ctrl/Cmd (or Shift) click adds/removes it from the current selection;
+  // the "All courses" chip resets to everything.
+  const courseChips = document.getElementById('courseChips');
+  const chipButtons = {};
+
+  function syncChipVisuals() {
+    const allOn = state.courses.size === COURSE_ORDER.length;
+    allChip.classList.toggle('on', allOn);
+    allChip.setAttribute('aria-pressed', String(allOn));
+    COURSE_ORDER.forEach((code) => {
+      const on = state.courses.has(code);
+      chipButtons[code].classList.toggle('on', on);
+      chipButtons[code].setAttribute('aria-pressed', String(on));
+    });
+  }
+
+  const allChip = document.createElement('button');
+  allChip.className = 'chip on all-chip';
+  allChip.type = 'button';
+  allChip.innerHTML = '<span class="chip-name">All courses</span>';
+  allChip.setAttribute('aria-pressed', 'true');
+  allChip.addEventListener('click', () => {
+    state.courses = new Set(COURSE_ORDER);
+    syncChipVisuals();
+    render();
+  });
+  courseChips.appendChild(allChip);
+
+  COURSE_ORDER.forEach((code) => {
+    const meta = COURSE_META[code];
+    const btn = document.createElement('button');
+    btn.className = 'chip on';
+    btn.type = 'button';
+    btn.innerHTML = `<span class="dot"></span><span class="chip-name">${meta.short}</span>`;
+    btn.title = `${code} — ${meta.title}`;
+    btn.setAttribute('aria-pressed', 'true');
+    btn.addEventListener('click', (ev) => {
+      const multi = ev.ctrlKey || ev.metaKey || ev.shiftKey;
+      if (multi) {
+        if (state.courses.has(code) && state.courses.size > 1) {
+          state.courses.delete(code);
+        } else {
+          state.courses.add(code);
+        }
+      } else {
+        // plain click: isolate to just this course (click it again to restore "all")
+        const isolated = state.courses.size === 1 && state.courses.has(code);
+        state.courses = isolated ? new Set(COURSE_ORDER) : new Set([code]);
+      }
+      syncChipVisuals();
+      render();
+    });
+    chipButtons[code] = btn;
+    courseChips.appendChild(btn);
+  });
+
+  const lowSlider = document.getElementById('lowSlider');
+  const highSlider = document.getElementById('highSlider');
+  const lowReadout = document.getElementById('lowReadout');
+  const highReadout = document.getElementById('highReadout');
+  const rangeFill = document.getElementById('rangeFill');
+
+  function fmtHour(h) {
+    const hh = Math.floor(h);
+    const mm = Math.round((h - hh) * 60);
+    return String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+  }
+
+  function updateSliderVisual() {
+    const pct1 = (state.low / 24) * 100;
+    const pct2 = (state.high / 24) * 100;
+    rangeFill.style.left = pct1 + '%';
+    rangeFill.style.width = Math.max(0, pct2 - pct1) + '%';
+    lowReadout.textContent = fmtHour(state.low);
+    highReadout.textContent = state.high >= 24 ? '24:00' : fmtHour(state.high);
+  }
+
+  lowSlider.addEventListener('input', () => {
+    let v = parseFloat(lowSlider.value);
+    if (v > state.high) { v = state.high; lowSlider.value = v; }
+    state.low = v;
+    updateSliderVisual();
+    render();
+  });
+  highSlider.addEventListener('input', () => {
+    let v = parseFloat(highSlider.value);
+    if (v < state.low) { v = state.low; highSlider.value = v; }
+    state.high = v;
+    updateSliderVisual();
+    render();
+  });
+
+  const seatsToggle = document.getElementById('seatsToggle');
+  seatsToggle.addEventListener('click', () => {
+    state.onlyOpen = !state.onlyOpen;
+    seatsToggle.classList.toggle('on', state.onlyOpen);
+    seatsToggle.setAttribute('aria-checked', String(state.onlyOpen));
+    render();
+  });
+
+  // NOTE: the source field is "AvailableSeats" formatted "open/capacity" (e.g. "0/40" = full,
+  // "38/40" = 38 open) -- the first number is already the OPEN seat count, not a booked count.
+  function seatStatus(open) {
+    return open <= 0 ? 'full' : 'good';
+  }
+
+  function statusLabel(status) {
+    return status === 'full' ? 'Full' : 'Open';
+  }
+
+  const boardBody = document.getElementById('boardBody');
+  const emptyState = document.getElementById('emptyState');
+  const summary = document.getElementById('summary');
+  const rowCount = document.getElementById('rowCount');
+
+  function render() {
+    const filtered = rows.filter((r) => {
+      if (!state.courses.has(r.course)) return false;
+      if (r.startHour < state.low || r.startHour > state.high) return false;
+      if (state.onlyOpen && r.booked <= 0) return false;
+      return true;
+    });
+
+    const totalOpen = filtered.reduce((sum, r) => sum + Math.max(0, r.booked), 0);
+    const fullCount = filtered.filter((r) => r.booked <= 0).length;
+
+    summary.innerHTML = `
+      <div class="metric"><b>${filtered.length}</b><span>session${filtered.length === 1 ? '' : 's'} match</span></div>
+      <div class="metric"><b>${totalOpen}</b><span>seats open</span></div>
+      <div class="metric"><b>${fullCount}</b><span>full / waitlist only</span></div>
+    `;
+
+    rowCount.textContent = `Showing ${filtered.length} of ${rows.length} total sessions`;
+
+    if (filtered.length === 0) {
+      boardBody.innerHTML = '';
+      emptyState.hidden = false;
+      return;
+    }
+    emptyState.hidden = true;
+
+    boardBody.innerHTML = filtered.map((r) => {
+      const status = seatStatus(r.booked);
+      const open = Math.max(0, r.booked);
+      const pct = r.cap > 0 ? Math.round((open / r.cap) * 100) : 0;
+      const meta = COURSE_META[r.course] || { title: '' };
+      const isFull = r.booked <= 0;
+      return `
+        <tr>
+          <td class="date-cell">${r.bgDate}</td>
+          <td class="time-cell">${r.bgStart}<span class="arrow">&rarr;</span>${r.bgEnd}</td>
+          <td>
+            <div class="course-chip">
+              <span class="name">${meta.title}</span>
+              <span class="id">${r.course}</span>
+            </div>
+          </td>
+          <td class="tz-cell">
+            <span class="orig-time">${r.origTime}</span>
+            ${r.tz}
+          </td>
+          <td>
+            <span class="seat-pill ${status}" title="${statusLabel(status)}">
+              <span class="bar"><i style="width:${pct}%"></i></span>
+              ${r.seats}
+            </span>
+          </td>
+          <td>
+            <a class="reg-link ${isFull ? 'full' : ''}" href="${r.link}" target="_blank" rel="noopener">
+              Details
+            </a>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  updateSliderVisual();
+  render();
+
+  const asOf = document.getElementById('asOf');
+  asOf.innerHTML = 'Data as of <strong>' + asOfText + '</strong>';
+})();
+</script>
